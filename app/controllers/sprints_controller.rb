@@ -5,7 +5,8 @@ class SprintsController < ApplicationController
 
   before_filter :find_project, :authorize
   before_filter :find_sprint, :except => ["assign_us", 'new', 'create', 'index']
-  before_filter :burndown, :only => [:index, :show]
+  before_filter :burndown, :only => [:show]
+  before_filter :release_burndown, :only => [:index]
   
   
 #  helper TasksHelper
@@ -216,6 +217,10 @@ class SprintsController < ApplicationController
     unless @sprint.blank?
       @chart = Burndown.new(@sprint)
     end
+  end
+
+  def release_burndown
+    @chart = ReleaseBurndown.new(@project)
   end
 
   def find_issue

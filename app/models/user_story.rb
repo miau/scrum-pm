@@ -31,6 +31,16 @@ class UserStory < ActiveRecord::Base
     end
   end
 
+  def closed_date
+    return nil if self.issues.nitems == 0 || self.issues.any? {|issue| issue.done_ratio != 100 }
+    done_ratio_journals = issues.map{|issue|
+      issue.journals.select{|journal|
+        journal.details.any?{|detail| detail.prop_key == "done_ratio" }
+      }
+    }.flatten
+    done_ratio_journals.map {|journal| journal.created_on }.last
+  end
+
   def story_points
     time_estimate.value
   end
